@@ -1,12 +1,18 @@
 package com.lld.SOLID.LSP.Good;
 
 public class Client {
-    public static void main(String[] args) {
-        Writable file = new WritableFile();
+    public static void readAnyFile(ReadableFile file) {
         file.read();
-        file.write();
+    }
+    public static void main(String[] args) {
+        WritableFile writableFile  = new WritableFile();
+        writableFile.read();
+        writableFile.write();
 
-        Readable readOnlyFile = new Readonly();
+        ReadableFile readOnlyFile = new Readonly();
         readOnlyFile.read();
+
+        readAnyFile(writableFile);
+        readAnyFile(readOnlyFile);
     }
 }
