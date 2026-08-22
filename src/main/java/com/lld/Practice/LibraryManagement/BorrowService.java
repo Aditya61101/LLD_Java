@@ -34,8 +34,7 @@ public class BorrowService {
         LibraryItemStatus status = libItem.getStatus();
         if(status == LibraryItemStatus.BORROWED) {
             addUserToQueue(user, libItemId);
-            // marking the library item as reserved
-            libItem.markAsReserved();
+            
             throw new RuntimeException("Item is currently borrowed. User " + user.getName() + " has been added to the reserve queue.");
         }
         // if the item is reserved and the user is not the person from whom its reserved
