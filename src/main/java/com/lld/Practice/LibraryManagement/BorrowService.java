@@ -102,7 +102,7 @@ public class BorrowService {
         Duration duration = Duration.between(startDate, Instant.now());
         long days = duration.toDays();
         if(days > borrowDuration) {
-            return (borrowDuration-days)*finePerDay;
+            return (days-borrowDuration)*finePerDay;
         }
         return 0.0;
     }
