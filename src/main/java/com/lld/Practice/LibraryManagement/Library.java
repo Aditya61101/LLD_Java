@@ -28,6 +28,7 @@ public class Library {
     public void removeUser(String userId) {
         try {
             User user = getUser(userId);
+users.remove(userId);
             System.out.println("User: "+ user.getName() + " removed.");
         } catch (Exception e) {
             throw new RuntimeException(e);
