@@ -31,7 +31,7 @@ public class ReservationService {
         }
         // if the item is reserved and the user is not the person from whom its reserved
         // then we put that user into the item's queue
-        if(status == LibraryItemStatus.RESERVED && !(!this.checkIfQueueEmpty(libItemId) && reserveQueue.get(libItemId).peek().getId().equals(userId))) {
+        if((status == LibraryItemStatus.RESERVED) && !(!this.checkIfQueueEmpty(libItemId) && getFirstUserInQueue(libItemId).getId().equals(userId))) {
             throw new RuntimeException("Item is currently reserved. User " + user.getName() + " has been added to the reserve queue.");
         }
     }
@@ -42,5 +42,9 @@ public class ReservationService {
 
     public boolean checkIfQueueEmpty(String libItemId) {
         return reserveQueue.get(libItemId).isEmpty();
+    }
+
+    public User getFirstUserInQueue(String libItemId) {
+        return reserveQueue.get(libItemId).peek();
     }
 }

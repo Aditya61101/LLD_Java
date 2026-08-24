@@ -12,12 +12,14 @@ public class BorrowService {
     private final Map<String, Set<BorrowedLibraryItem>> borrowedHistory;
     private final Map<String, Integer>activeBorrowCount;
     Map<LibraryItemType, BorrowPolicy> policyMap;
+    NotificationService notificationService;
     
-    public BorrowService(Map<LibraryItemType, BorrowPolicy> policyMap) {
+    public BorrowService(Map<LibraryItemType, BorrowPolicy> policyMap, NotificationService notificationService) {
         reservationService = new ReservationService();
+        this.notificationService = notificationService;
+        this.policyMap = policyMap;
         borrowedHistory = new HashMap<>();
         activeBorrowCount = new HashMap<>();
-        this.policyMap = policyMap;
     }
 
     public BorrowedLibraryItem borrowItem(User user, LibraryItem libItem) {
@@ -69,7 +71,12 @@ public class BorrowService {
         activeBorrowCount.put(userId, activeBorrowCount.getOrDefault(userId, 0) - 1);
         // mark the borrowed item as inactive
         borrowedLibraryItem.deactivate(returnedDate);
+
         // TODO: notify the first reserved person
+        User user = reservationService.getFirstUserInQueue(libItemId);
+        LibraryItem libraryItem = borrowedLibraryItem.getLibraryItem();
+        notificationService.notify(user, libraryItem);
+
         return fine;
     }
 

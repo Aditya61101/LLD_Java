@@ -1,6 +1,7 @@
 package com.lld.Practice.LibraryManagement;
 
 import com.lld.Practice.LibraryManagement.services.BorrowService;
+import com.lld.Practice.LibraryManagement.services.NotificationService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,10 +14,10 @@ public class Library {
     Map<String, LibraryItem> items;
     BorrowService borrowService;
 
-    public Library(Map<LibraryItemType, BorrowPolicy> policyMap) {
+    public Library(Map<LibraryItemType, BorrowPolicy> policyMap, NotificationService notificationService) {
         users = new HashMap<>();
         items = new HashMap<>();
-        borrowService = new BorrowService(policyMap);
+        borrowService = new BorrowService(policyMap, notificationService);
     }
 
     public void addUser(User user) {
