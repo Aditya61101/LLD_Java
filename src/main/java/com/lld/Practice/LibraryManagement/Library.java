@@ -1,5 +1,7 @@
 package com.lld.Practice.LibraryManagement;
 
+import com.lld.Practice.LibraryManagement.services.BorrowService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +13,10 @@ public class Library {
     Map<String, LibraryItem> items;
     BorrowService borrowService;
 
-    Library() {
+    public Library(Map<LibraryItemType, BorrowPolicy> policyMap) {
         users = new HashMap<>();
         items = new HashMap<>();
-        borrowService = new BorrowService(10,30,5);
+        borrowService = new BorrowService(policyMap);
     }
 
     public void addUser(User user) {
@@ -47,7 +49,7 @@ users.remove(userId);
             LibraryItem libraryItem = this.getLibraryItem(itemId);
             LibraryItemStatus status = libraryItem.getStatus();
             if(status == LibraryItemStatus.BORROWED || status == LibraryItemStatus.RESERVED) {
-                throw new IllegalStateException("Item has already is not available to delete.");
+                throw new IllegalStateException("Item is not available to delete.");
             }
             items.remove(itemId);
         } catch (Exception e) {

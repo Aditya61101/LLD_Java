@@ -15,22 +15,24 @@ abstract public class LibraryItem {
         this.itemType = itemType;
     }
 
-    LibraryItemStatus getStatus() {
+    public LibraryItemStatus getStatus() {
         return this.status;
     }
-    void markAsBorrowed() {
+    public void markAsBorrowed() {
         this.status = LibraryItemStatus.BORROWED;
     }
-    void markAsAvailable() {
+    public void markAsAvailable() {
         this.status = LibraryItemStatus.AVAILABLE;
     }
-    void markAsReserved() {
+    public void markAsReserved() {
         this.status = LibraryItemStatus.RESERVED;
     }
 
-    String getId() { return this.id; }
+    public String getId() { return this.id; }
 
-    String getTitle() { return this.title; }
+    public String getTitle() { return this.title; }
+
+    public LibraryItemType getItemType() { return this.itemType; }
 
     // Unified method for search logic
     public abstract String getStandardCode();

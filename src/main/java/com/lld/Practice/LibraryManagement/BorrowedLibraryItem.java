@@ -4,15 +4,22 @@ import java.time.Instant;
 
 public class BorrowedLibraryItem {
     LibraryItem libraryItem;
-    Instant startDate;
+    Instant borrowedDate;
+    Instant returnedDate;
     User user;
-    boolean isActive;
 
     public BorrowedLibraryItem(LibraryItem libraryItem, Instant sd, User u) {
         this.libraryItem = libraryItem;
-        this.startDate = sd;
+        this.borrowedDate = sd;
         this.user = u;
-        this.isActive = true;
+        this.returnedDate = null;
     }
-    void deactivate() { this.isActive = false; }
+    public void deactivate(Instant time) { this.returnedDate = time; }
+
+    public LibraryItem getLibraryItem() { return this.libraryItem; }
+    public User getUser() { return this.user; }
+    public Instant getBorrowedDate() { return this.borrowedDate; }
+    public Instant getReturnedDate() { return this.returnedDate; }
+
+    public void setReturnedDate(Instant time) { this.borrowedDate = time; }
 }
