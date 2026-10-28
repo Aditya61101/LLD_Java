@@ -48,7 +48,7 @@ public class Client {
                 return gameStatus;
             }
             System.out.println("Please try again!");
-            takeInput(sc,gp, newGame, retryCount+1);
+            return takeInput(sc,gp, newGame, retryCount+1);
         }
         return gameStatus;
     }
