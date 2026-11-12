@@ -1,4 +1,4 @@
-package com.lld.Practice.VendingMachine.PaymenyStrategies;
+package com.lld.Practice.VendingMachine.PaymentStrategies;
 
 import com.lld.Practice.VendingMachine.PaymentMethod;
 

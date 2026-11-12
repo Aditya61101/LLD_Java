@@ -1,23 +1,23 @@
 package com.lld.Practice.VendingMachine.States;
 
 import com.lld.Practice.VendingMachine.PaymentMethod;
-import com.lld.Practice.VendingMachine.VendingMachine;
+import com.lld.Practice.VendingMachine.MultiVendingMachine;
 import com.lld.Practice.VendingMachine.VendingState;
 
 import java.util.Map;
 
 public class OutOfOrder extends VendingState {
-    public OutOfOrder(VendingMachine vm) {
+    public OutOfOrder(MultiVendingMachine vm) {
         super(vm);
     }
 
     @Override
-    public void checkInventory(Map<String, Integer> userProducts) {
+    public Map<String, Integer> checkInventory(Map<String, Integer> userProducts) {
         throw new RuntimeException("Machine is out of order, please try after sometime.");
     }
 
     @Override
-    public void dispense() {
+    public Map<String, Integer> dispense() {
         throw new RuntimeException("Machine is out of order, please try after sometime.");
     }
 

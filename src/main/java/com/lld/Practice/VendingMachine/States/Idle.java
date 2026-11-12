@@ -1,13 +1,13 @@
 package com.lld.Practice.VendingMachine.States;
 
 import com.lld.Practice.VendingMachine.PaymentMethod;
-import com.lld.Practice.VendingMachine.VendingMachine;
+import com.lld.Practice.VendingMachine.MultiVendingMachine;
 import com.lld.Practice.VendingMachine.VendingState;
 
 import java.util.Map;
 
 public class Idle extends VendingState {
-    public Idle(VendingMachine vm) {
+    public Idle(MultiVendingMachine vm) {
         super(vm);
     }
 
@@ -23,12 +23,12 @@ public class Idle extends VendingState {
     }
 
     @Override
-    public void checkInventory(Map<String, Integer> userProducts) {
+    public Map<String, Integer> checkInventory(Map<String, Integer> userProducts) {
         throw new IllegalStateException("Feature not available in Idle state.");
     }
 
     @Override
-    public void dispense() {
+    public Map<String, Integer> dispense() {
         throw new IllegalStateException("Feature not available in Idle state.");
     }
 }

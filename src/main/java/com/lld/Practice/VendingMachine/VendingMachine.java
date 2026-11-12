@@ -1,26 +1,15 @@
 package com.lld.Practice.VendingMachine;
 
-import com.lld.Practice.VendingMachine.States.Idle;
+import java.util.Map;
 
-public class VendingMachine {
-    VendingState state;
-    private int money;
-    VendingMachine(VendingState vs) {
-        state = vs;
-
-    }
-    public void setState(VendingState newState) {
-        this.state = newState;
-    }
-    public void processMoney(PaymentMethod pm) {
-        state.processMoney(pm);
-    }
-
-    public void setMoney(int money) {
-        this.money = money;
-    }
-
-    public int getMoney() {
-        return this.money;
-    }
+public interface VendingMachine {
+    public void setState(VendingState newState);
+    public void processMoney(PaymentMethod pm);
+    public SelectionStatus placeOrder(Map<String, Integer> products);
+    public Session getSession();
+    public Inventory getInventory();
+    public void setMoney(int money);
+    public void showAvailableProducts();
+    public boolean isSessionActive();
+    public int returnMoney();
 }

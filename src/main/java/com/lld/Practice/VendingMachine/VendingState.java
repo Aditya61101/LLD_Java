@@ -9,6 +9,6 @@ public abstract class VendingState {
         vendingMachine = vm;
     }
     public abstract void processMoney(PaymentMethod pm);
-    public abstract void checkInventory(Map<String, Integer> userProducts);
-    public abstract void dispense();
+    public abstract Map<String, Integer> checkInventory(Map<String, Integer> userProducts);
+    public abstract Map<String, Integer> dispense();
 }
