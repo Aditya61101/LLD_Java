@@ -58,6 +58,7 @@ public class MultiVendingMachine implements VendingMachine {
         if(!session.getSessionStatus()) throw new RuntimeException("Money not provided");
         setState(new Dispense(this));
         session.closeSession();
+        this.reset();
         return this.session.getMoney();
     }
     private Map<String, Integer> dispense() {
