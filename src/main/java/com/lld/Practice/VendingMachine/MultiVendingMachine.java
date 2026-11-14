@@ -38,6 +38,8 @@ public class MultiVendingMachine implements VendingMachine {
         for (Map.Entry<String, Integer> e : products.entrySet()) {
             if (!this.getInventory().productExists(e.getKey())) {
                 return SelectionStatus.INVALID_PRODUCT;
+            } else if(e.getValue() <= 0) {
+                return SelectionStatus.INVALID_QUANTITY;
             }
         }
         Map<String,Integer> checkedProducts = state.checkInventory(products);

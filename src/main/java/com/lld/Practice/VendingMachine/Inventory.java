@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
-    private final Map<String,Product> availableProducts = new HashMap<>();;
+    private final Map<String,Product> availableProducts = new HashMap<>();
 
     public void addProduct(Product product) {
         availableProducts.put(product.getCode(), product);
@@ -14,7 +14,7 @@ public class Inventory {
         userProducts.forEach((k,v) -> {
             Product product = availableProducts.get(k);
             int availableCount = product.count;
-            if(availableCount >= v) {
+            if(v > 0 && availableCount >= v) {
                 finalUserProducts.put(k,v);
             } else if (availableCount == 0){
                 System.out.println("⚠️ " + "Sorry, '" + product.name + "' is completely sold out.");
