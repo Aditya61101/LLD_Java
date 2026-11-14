@@ -43,7 +43,12 @@ public class MultiVendingMachine implements VendingMachine {
         if(checkedProducts.isEmpty()) return SelectionStatus.OUT_OF_STOCK;
 
         session.createOrder(checkedProducts);
-        this.dispense();
+        Map<String, Integer> result = this.dispense();
+        System.out.println("Dispensed products:");
+        result.forEach((product, qty) ->
+                System.out.println("  " + product + " -> " + qty)
+        );
+        this.reset();
         return SelectionStatus.SUCCESS;
     }
     // interface method
@@ -55,10 +60,9 @@ public class MultiVendingMachine implements VendingMachine {
         session.closeSession();
         return this.session.getMoney();
     }
-    private void dispense() {
+    private Map<String, Integer> dispense() {
         setState(new Dispense(this));
-        state.dispense();
-        session.closeSession();
+        return state.dispense();
     }
 
     public void reset() {

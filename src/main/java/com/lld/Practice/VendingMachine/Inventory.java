@@ -30,10 +30,31 @@ public class Inventory {
         return availableProducts.containsKey(code);
     }
     public void deductProductsCount(Map<String,Integer> userProducts) {
+        for (Map.Entry<String, Integer> entry : userProducts.entrySet()) {
+            String productName = entry.getKey();
+            int qty = entry.getValue();
 
+            Product product = availableProducts.get(productName);
+            if (product == null) {
+                throw new IllegalArgumentException("Unknown product: " + productName);
+            }
+            if (product.getQuantity() < qty) {
+                throw new IllegalStateException("Insufficient stock for " + productName
+                        + ". Available: " + product.getQuantity());
+            }
+            product.setQuantity(product.getQuantity() - qty);
+        }
     }
 
     public void showAvailableProducts() {
         // show product list with quantities and cost
+        System.out.println("=== Available Products ===");
+        System.out.println("Product\t\tPrice\t\tStock");
+        System.out.println("------------------------------------------");
+        for (Map.Entry<String, Product> entry : availableProducts.entrySet()) {
+            Product p = entry.getValue();
+            System.out.printf("%-14s₹%-8d%d%n", p.getName(), p.getPrice(), p.getQuantity());
+        }
+        System.out.println("==========================================");
     }
 }
