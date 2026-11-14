@@ -1,6 +1,7 @@
 package com.lld.Practice.VendingMachine;
 
 import com.lld.Practice.VendingMachine.States.Dispense;
+import com.lld.Practice.VendingMachine.States.HasMoney;
 import com.lld.Practice.VendingMachine.States.Idle;
 
 import java.util.Map;
@@ -10,9 +11,9 @@ public class MultiVendingMachine implements VendingMachine {
     private Session session;
     public Inventory inventory;
 
-    public MultiVendingMachine() {
+    public MultiVendingMachine(Inventory inventory) {
         state = new Idle(this);
-        inventory = new Inventory();
+        this.inventory = inventory;
     }
     // interface method
     public void setState(VendingState newState) {
@@ -42,15 +43,20 @@ public class MultiVendingMachine implements VendingMachine {
         Map<String,Integer> checkedProducts = state.checkInventory(products);
         if(checkedProducts.isEmpty()) return SelectionStatus.OUT_OF_STOCK;
 
+        if(session.getMoney() < this.getTotalPrice(checkedProducts)) {
+            return SelectionStatus.INSUFFICIENT_FUNDS;
+        }
+
         session.createOrder(checkedProducts);
         Map<String, Integer> result = this.dispense();
         System.out.println("Dispensed products:");
         result.forEach((product, qty) ->
                 System.out.println("  " + product + " -> " + qty)
         );
-        this.reset();
+        this.setState(new HasMoney(this));
         return SelectionStatus.SUCCESS;
     }
+
     // interface method
     public Inventory getInventory() { return this.inventory; }
 
@@ -61,10 +67,6 @@ public class MultiVendingMachine implements VendingMachine {
         this.reset();
         return this.session.getMoney();
     }
-    private Map<String, Integer> dispense() {
-        setState(new Dispense(this));
-        return state.dispense();
-    }
 
     public void reset() {
         setState(new Idle(this));
@@ -73,4 +75,20 @@ public class MultiVendingMachine implements VendingMachine {
         this.getInventory().showAvailableProducts();
     }
     public boolean isSessionActive() {return this.session.getSessionStatus(); }
+
+    private Map<String, Integer> dispense() {
+        setState(new Dispense(this));
+        return state.dispense();
+    }
+
+    private int getTotalPrice(Map<String,Integer> checkedProducts) {
+        // 3. Calculate total price
+        int totalPrice = 0;
+
+        for (Map.Entry<String, Integer> entry : checkedProducts.entrySet()) {
+            Product product = inventory.getProductByCode(entry.getKey());
+            totalPrice += product.getPrice() * entry.getValue();
+        }
+        return totalPrice;
+    }
 }

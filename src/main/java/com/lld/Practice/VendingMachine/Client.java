@@ -18,31 +18,43 @@ public class Client {
     }
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        VendingMachine vm = new MultiVendingMachine();
+        Inventory inventory = new Inventory();
+
+        inventory.addProduct(new Product("C01", "Coke", 40, 10));
+        inventory.addProduct(new Product("C02", "Chips", 20, 5));
+
+        VendingMachine vm = new MultiVendingMachine(inventory);
         vm.showAvailableProducts();
 
         PaymentMethod pm = new Cash();
         vm.processMoney(pm);
-        while(vm.isSessionActive()) {
-            Map<String, Integer> order = Client.takeOrder(scanner);
-            SelectionStatus result = vm.placeOrder(order);
+        while (vm.isSessionActive()) {
 
-//            if(result == SelectionStatus.SUCCESS)
-
-            if(result == SelectionStatus.OUT_OF_STOCK) {
-                System.out.println("Product is out of stock.");
-            } else if(result == SelectionStatus.INVALID_PRODUCT) {
-                System.out.println("Invalid Product.");
-            }
-
-            System.out.println("1. Select another product");
+            System.out.println("1. Select product");
             System.out.println("2. Return money");
+
             int choice = scanner.nextInt();
 
             switch (choice) {
+
                 case 1:
-                    Map<String, Integer> newOrder = Client.takeOrder(scanner);
-                    vm.placeOrder(newOrder);
+                    Map<String, Integer> order = takeOrder(scanner);
+
+                    SelectionStatus status = vm.placeOrder(order);
+
+                    switch (status) {
+                        case SUCCESS ->
+                                System.out.println("Purchase successful");
+
+                        case OUT_OF_STOCK ->
+                                System.out.println("Product out of stock");
+
+                        case INVALID_PRODUCT ->
+                                System.out.println("Invalid product");
+
+                        case INSUFFICIENT_FUNDS ->
+                                System.out.println("Insufficient balance");
+                    }
                     break;
 
                 case 2:

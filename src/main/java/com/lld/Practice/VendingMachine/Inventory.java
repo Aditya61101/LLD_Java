@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
-    Map<String,Product> availableProducts;
+    private final Map<String,Product> availableProducts = new HashMap<>();;
 
+    public void addProduct(Product product) {
+        availableProducts.put(product.getCode(), product);
+    }
     public Map<String,Integer> check(Map<String,Integer> userProducts) {
         Map<String, Integer> finalUserProducts = new HashMap<>();
         userProducts.forEach((k,v) -> {
