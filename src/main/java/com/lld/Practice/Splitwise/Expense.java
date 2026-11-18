@@ -40,4 +40,7 @@ public class Expense {
     public String getId() {
         return id;
     }
+    public Map<String, BigDecimal> getShares() {
+        return shares;
+    }
 }
