@@ -16,12 +16,12 @@ public class EqualSplit implements SplitStrategy {
 
     @Override
     public Map<String, BigDecimal> split(BigDecimal amount, List<String> participants, Map<String, BigDecimal> allocations) {
-        if (!validate(amount)) {
+        int scale = CURRENCY.getDefaultFractionDigits();
+        if (!validate(amount, scale)) {
             throw new IllegalArgumentException("Invalid equal split");
         }
         // LinkedHashMap preserves participant insertion order, making remainder distribution deterministic.
         Map<String, BigDecimal> shares = new LinkedHashMap<>();
-        int scale = CURRENCY.getDefaultFractionDigits();
         BigDecimal unit = BigDecimal.ONE.movePointLeft(scale);
         /*
             Argument	            Meaning
@@ -56,9 +56,7 @@ public class EqualSplit implements SplitStrategy {
         return shares;
     }
 
-    private boolean validate(BigDecimal amount) {
-        // for INR, scale=2
-        int scale = CURRENCY.getDefaultFractionDigits();
+    private boolean validate(BigDecimal amount, int scale) {
         try {
             // setScale(2) means represent the number with two digits after the decimal point.
             // example 100->100.00, 100.2 -> 100.20, 100.055 -> raises exception
@@ -66,7 +64,6 @@ public class EqualSplit implements SplitStrategy {
         } catch (ArithmeticException e) {
             return false;
         }
-
         return true;
     }
 }
