@@ -8,12 +8,19 @@ import java.util.Map;
 
 public class ExactSplit implements SplitStrategy {
     @Override
-    public Map<String, BigDecimal> split(BigDecimal amount, List<String> participants, List<BigDecimal> contributions) {
-        return Map.of();
+    public Map<String, BigDecimal> split(BigDecimal amount, List<String> participants, Map<String, BigDecimal> allocations) {
+        if (!validate(amount, allocations)) {
+            throw new IllegalArgumentException("Invalid exact split");
+        }
+        return allocations;
     }
 
-    @Override
-    public boolean validate(BigDecimal amount, List<BigDecimal> contributions) {
-        return false;
+    private boolean validate(BigDecimal amount, Map<String, BigDecimal> allocations) {
+        BigDecimal totalAllocation = BigDecimal.valueOf(0);
+        for(BigDecimal allocation: allocations.values()) {
+            if(allocation.signum() <= 0) return false;
+            totalAllocation = totalAllocation.add(allocation);
+        }
+        return (amount.compareTo(totalAllocation) != 0);
     }
 }
