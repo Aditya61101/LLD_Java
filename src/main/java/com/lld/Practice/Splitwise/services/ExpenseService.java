@@ -40,7 +40,11 @@ public class ExpenseService {
             throw new RuntimeException(e);
         }
     }
-
+    public void renameDescription(String expenseId, String groupId, String description) {
+        Group group = groupRepository.getGroup(groupId);
+        Expense expense = group.getExpense(expenseId);
+        expense.renameDescription(description);
+    }
     private void checkParticipantsExistence(List<String>participants, Group group) {
         for(String userId:participants) {
             if(!userRepository.userExistsById(userId)) throw new IllegalArgumentException("Participant doesn't exists");

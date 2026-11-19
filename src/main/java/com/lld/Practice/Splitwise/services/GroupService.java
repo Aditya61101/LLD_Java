@@ -1,16 +1,20 @@
 package com.lld.Practice.Splitwise.services;
 
 import com.lld.Practice.Splitwise.BalanceStatus;
+import com.lld.Practice.Splitwise.Expense;
 import com.lld.Practice.Splitwise.Group;
-import com.lld.Practice.Splitwise.SplitStrategyRegistry;
+import com.lld.Practice.Splitwise.Settlement;
 import com.lld.Practice.Splitwise.repositories.GroupRepository;
 import com.lld.Practice.Splitwise.repositories.UserRepository;
+
+import java.util.List;
+import java.util.Map;
 
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
-    public GroupService(GroupRepository groupRepository, UserRepository userRepository, SplitStrategyRegistry splitStrategyRegistry) {
+    public GroupService(GroupRepository groupRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
     }
@@ -32,5 +36,18 @@ public class GroupService {
         Group group = groupRepository.getGroup(groupId);
         if(!group.isGroupMember(userId)) throw new IllegalArgumentException("User is not the member of this group.");
         return group.removeUser(userId);
+    }
+
+    public void deleteGroup(String groupId) {
+        groupRepository.deleteGroup(groupId);
+    }
+
+    public Map<String, Expense> getAllExpenses(String groupId) {
+        Group group = groupRepository.getGroup(groupId);
+        return group.getExpenses();
+    }
+    public Map<String, Settlement> getAllSettlements(String groupId) {
+        Group group = groupRepository.getGroup(groupId);
+        return group.getSettlements();
     }
 }

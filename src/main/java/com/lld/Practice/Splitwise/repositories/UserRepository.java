@@ -12,5 +12,6 @@ public interface UserRepository {
     public void saveUser(User user);
     public BalanceStatus deleteUser(String userId);
     public boolean userExistsById(String userId);
+    public boolean userExistsByEmail(String email);
 
 }

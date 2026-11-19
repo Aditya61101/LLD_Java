@@ -7,8 +7,8 @@ public class Group {
     private final String id;
     private String name;
     private final Set<String> members = new HashSet<>();
-    private final List<Expense>expenseList = new ArrayList<>();
-    private final List<Settlement>settlementList = new ArrayList<>();
+    private final Map<String, Expense>expenses = new HashMap<>();
+    private final Map<String, Settlement>settlements = new HashMap<>();
     private final BalanceSheet balanceSheet;
 
     public Group(String name, String creatorId) {
@@ -30,19 +30,19 @@ public class Group {
     public BalanceStatus removeUser(String userId) {
         if(!members.contains(userId)) throw new IllegalArgumentException("User not present in group");
 
-        BalanceStatus status = balanceSheet.hasOutstandingBalance(userId);
+        BalanceStatus status = balanceSheet.getBalanceStatus(userId);
         if(status != BalanceStatus.CLEAR) return status;
 
         members.remove(userId);
         return status;
     }
 
-    public BalanceStatus hasOutStandingBalance(String userId) {
-        return balanceSheet.hasOutstandingBalance(userId);
+    public BalanceStatus getBalanceStatus(String userId) {
+        return balanceSheet.getBalanceStatus(userId);
     }
 
     public void recordExpense(Expense expense) {
-        this.expenseList.add(expense);
+        this.expenses.put(expense.getId(), expense);
         String payerId = expense.getPayerId();
         for(Map.Entry<String, BigDecimal> s: expense.getShares().entrySet()) {
             balanceSheet.addDebt(payerId, s.getKey(), s.getValue());
@@ -50,7 +50,7 @@ public class Group {
     }
 
     public void recordSettlement(Settlement settlement) {
-        this.settlementList.add(settlement);
+        this.settlements.put(settlement.getId(), settlement);
         String payerId = settlement.getPayerId();
         String payeeId = settlement.getPayeeId();
         BigDecimal amount = settlement.getAmount();
@@ -68,16 +68,19 @@ public class Group {
         return name;
     }
 
-    public List<Expense> getExpenseList() {
-        return expenseList;
+    public Map<String, Expense> getExpenses() {
+        return expenses;
     }
 
-    public List<Settlement> getSettlementList() {
-        return settlementList;
+    public Map<String, Settlement> getSettlements() {
+        return settlements;
     }
 
     public void checkSettlementValidity(String payerId, String payeeId, BigDecimal amount) {
         balanceSheet.checkSettlementValidity(payerId, payeeId, amount);
     }
-
+    public Expense getExpense(String expenseId) {
+        if(!expenses.containsKey(expenseId)) throw new IllegalArgumentException("Expense not found!");
+        return expenses.get(expenseId);
+    }
 }

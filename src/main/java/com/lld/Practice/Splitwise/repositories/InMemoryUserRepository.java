@@ -37,11 +37,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     public void saveUser(User user) {
         String userId = user.getId();
-        // check through email
         String email = user.getEmail();
-        if(this.userExistsByEmail(email)) {
-            throw new IllegalArgumentException("User already found!");
-        }
         users.put(userId, user);
         usersByEmail.put(email, user);
     }
@@ -52,7 +48,7 @@ public class InMemoryUserRepository implements UserRepository {
         }
         // if user owes someone or someone owes user, we won't allow user deletion
         for(Group group: groupRepository.getAllGroups().values()) {
-            BalanceStatus status = group.hasOutStandingBalance(userId);
+            BalanceStatus status = group.getBalanceStatus(userId);
             if(status != BalanceStatus.CLEAR) return status;
         }
         String email = users.get(userId).getEmail();
@@ -61,7 +57,7 @@ public class InMemoryUserRepository implements UserRepository {
         return BalanceStatus.CLEAR;
     }
 
-    private boolean userExistsByEmail(String email) {
+    public boolean userExistsByEmail(String email) {
         return usersByEmail.containsKey(email);
     }
 

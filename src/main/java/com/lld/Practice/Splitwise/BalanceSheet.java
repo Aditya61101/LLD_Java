@@ -7,7 +7,11 @@ import java.util.Map;
 public class BalanceSheet {
     private final Map<String, Map<String, BigDecimal>> balance = new HashMap<>();
 
-    protected BalanceStatus hasOutstandingBalance(String userId) {
+    protected BalanceStatus getBalanceStatus(String userId) {
+        if(balance.containsKey(userId)) return BalanceStatus.DEBTOR;
+        for(Map<String, BigDecimal> creditor: balance.values()) {
+            if(creditor.containsKey(userId)) return BalanceStatus.CREDITOR;
+        }
         return BalanceStatus.CLEAR;
     }
     protected void addDebt(String payerId, String payeeId, BigDecimal amount) {

@@ -6,7 +6,6 @@ import com.lld.Practice.Splitwise.repositories.GroupRepository;
 import com.lld.Practice.Splitwise.repositories.UserRepository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
