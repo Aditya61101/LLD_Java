@@ -21,6 +21,6 @@ public class ExactSplit implements SplitStrategy {
             if(allocation.signum() <= 0) return false;
             totalAllocation = totalAllocation.add(allocation);
         }
-        return (amount.compareTo(totalAllocation) != 0);
+        return (amount.compareTo(totalAllocation) == 0);
     }
 }
