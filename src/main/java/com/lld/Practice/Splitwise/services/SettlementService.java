@@ -18,7 +18,6 @@ public class SettlementService {
         this.userRepository = userRepository;
     }
     public void createSettlement(String payerId, String payeeId, BigDecimal amount, String groupId) {
-        try {
             // 1. amount should be positive
             if(amount.compareTo(BigDecimal.ZERO) <= 0) throw new RuntimeException("Expense amount should be positive");
             // 2. get group or throws exception
@@ -31,9 +30,6 @@ public class SettlementService {
             Settlement settlement = new Settlement(payerId, payeeId, amount);
             // 7. record settlement
             group.recordSettlement(settlement);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
     private void checkParticipantsExistence(List<String> participants, Group group) {
         for(String userId:participants) {
