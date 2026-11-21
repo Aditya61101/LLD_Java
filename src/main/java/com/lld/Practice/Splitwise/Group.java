@@ -45,7 +45,9 @@ public class Group {
         this.expenses.put(expense.getId(), expense);
         String payerId = expense.getPayerId();
         for(Map.Entry<String, BigDecimal> s: expense.getShares().entrySet()) {
-            balanceSheet.addDebt(payerId, s.getKey(), s.getValue());
+if (!payerId.equals(s.getKey())) {
+    balanceSheet.addDebt(payerId, s.getKey(), s.getValue());
+}
         }
     }
 
