@@ -24,7 +24,7 @@ public class SplitWiseSystem {
 
     SplitWiseSystem() {
         GroupRepository groupRepository = new InMemoryGroupRepository();
-        UserRepository userRepository = new InMemoryUserRepository(groupRepository);
+        UserRepository userRepository = new InMemoryUserRepository();
 
         SplitStrategyRegistry splitStrategyRegistry = new SplitStrategyRegistry();
         splitStrategyRegistry.register(SplitType.EQUAL, new EqualSplit());
@@ -33,7 +33,7 @@ public class SplitWiseSystem {
 
         this.expenseService = new ExpenseService(groupRepository, userRepository, splitStrategyRegistry);
         this.groupService = new GroupService(groupRepository, userRepository);
-        this.userService = new UserService(userRepository);
+        this.userService = new UserService(userRepository, groupRepository);
         this.settlementService = new SettlementService(groupRepository, userRepository);
     }
     // User CRUD

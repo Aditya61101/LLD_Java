@@ -24,7 +24,7 @@ public class ExpenseService {
         // 1. get group or throws exception
         Group group = groupRepository.getGroup(groupId);
         // 2. common validations
-        this.checkExpenseValidity(amount, participants, payerId, group, allocations, splitType);
+        this.checkExpenseValidity(amount, description, participants, payerId, group, allocations, splitType);
         // 4. get shares based on splitType
         SplitStrategy splitStrategy = splitStrategyRegistry.getSplit(splitType);
         Map<String, BigDecimal> shares = splitStrategy.split(amount, participants, allocations);
@@ -38,29 +38,23 @@ public class ExpenseService {
         Expense expense = group.getExpense(expenseId);
         expense.renameDescription(description);
     }
-    private void checkExpenseValidity(BigDecimal amount, List<String>participants, String payerId, Group group, Map<String, BigDecimal> allocations, SplitType splitType) {
-        // 1. amount should be positive
-        if(amount == null || amount.signum() <= 0) throw new RuntimeException("Expense amount should be positive");
+    private void checkExpenseValidity(BigDecimal amount, String description, List<String>participants, String payerId, Group group, Map<String, BigDecimal> allocations, SplitType splitType) {
+        // amount should be positive
+        if(amount == null || amount.signum() <= 0) throw new IllegalArgumentException("Expense amount should be positive");
 
-        // 2. checks whether payer exists
+        if (description == null || description.isBlank()) throw new IllegalArgumentException("Expense description is required");
+
+        if (splitType == null) throw new IllegalArgumentException("Split type is required");
+
+        // checks whether payer exists
         if(!userRepository.userExistsById(payerId)) throw new IllegalArgumentException("Payer doesn't exists");
 
-        // 3. payer should exist in group
-        if(!group.isGroupMember(payerId)) throw new IllegalArgumentException("Participant not a member of the group");
+        // payer should exist in group
+        if(!group.isGroupMember(payerId)) throw new IllegalArgumentException("Payer is not a member of the group");
 
         // at least one participant should be there
         if (participants == null || participants.isEmpty()) throw new IllegalArgumentException("At least one participant is required.");
 
-        // for percentage and exact we need allocations of each participant and it should match participants
-        if (splitType != SplitType.EQUAL) {
-            if(allocations == null || allocations.isEmpty()) throw new IllegalArgumentException("Allocations cannot be empty for: "+ splitType + " split.");
-            if(!allocations.keySet().equals(new HashSet<>(participants))) throw new IllegalArgumentException("Allocations must exactly match participants for: "+ splitType + " split.");
-        }
-
-        for(String userId:participants) {
-            if(!userRepository.userExistsById(userId)) throw new IllegalArgumentException("Participant doesn't exists");
-            if(!group.isGroupMember(userId)) throw new IllegalArgumentException("Participant not a member of the group");
-        }
         // checks whether ids are not "", " " or null
         if (participants.stream().anyMatch(id -> id == null || id.isBlank())) {
             throw new IllegalArgumentException("Participant id must be a valid string");
@@ -68,6 +62,18 @@ public class ExpenseService {
         // checks for unique participants
         if (new HashSet<>(participants).size() != participants.size()) {
             throw new IllegalArgumentException("Duplicate participants present");
+        }
+        // checks for participants existence
+        for(String userId:participants) {
+            if(!userRepository.userExistsById(userId)) throw new IllegalArgumentException("Participant doesn't exists");
+            if(!group.isGroupMember(userId)) throw new IllegalArgumentException("Participant not a member of the group");
+        }
+        // for percentage and exact we need allocations of each participant and it should match participants
+        if (splitType != SplitType.EQUAL) {
+            if(allocations == null || allocations.isEmpty()) throw new IllegalArgumentException("Allocations cannot be empty for: "+ splitType + " split.");
+            if(!allocations.keySet().equals(new HashSet<>(participants))) throw new IllegalArgumentException("Allocations must exactly match participants for: "+ splitType + " split.");
+        } else if (allocations != null && !allocations.isEmpty()) {
+            throw new IllegalArgumentException("Equal split does not accept allocations");
         }
     }
 }

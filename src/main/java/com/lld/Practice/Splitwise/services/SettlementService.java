@@ -19,7 +19,7 @@ public class SettlementService {
     }
     public void createSettlement(String payerId, String payeeId, BigDecimal amount, String groupId) {
             // 1. amount should be positive
-            if(amount.compareTo(BigDecimal.ZERO) <= 0) throw new RuntimeException("Expense amount should be positive");
+            if(amount==null || amount.compareTo(BigDecimal.ZERO) <= 0) throw new RuntimeException("Expense amount should be positive");
             // 2. get group or throws exception
             Group group = groupRepository.getGroup(groupId);
             // 3. checks payer and payee existence

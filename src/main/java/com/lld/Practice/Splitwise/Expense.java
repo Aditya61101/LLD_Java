@@ -18,7 +18,8 @@ public class Expense {
         this.splitType = splitType;
         this.amount = amount;
         this.description = description;
-        this.shares = shares;
+        // Map.copyOf creates an unmodifiable snapshot of the original map
+        this.shares = Map.copyOf(shares);
     }
 
     public void renameDescription(String newDescription) {

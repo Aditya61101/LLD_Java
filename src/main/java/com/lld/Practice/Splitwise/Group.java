@@ -45,9 +45,9 @@ public class Group {
         this.expenses.put(expense.getId(), expense);
         String payerId = expense.getPayerId();
         for(Map.Entry<String, BigDecimal> s: expense.getShares().entrySet()) {
-if (!payerId.equals(s.getKey())) {
-    balanceSheet.addDebt(payerId, s.getKey(), s.getValue());
-}
+            if (!payerId.equals(s.getKey())) {
+                balanceSheet.addDebt(payerId, s.getKey(), s.getValue());
+            }
         }
     }
 
@@ -71,11 +71,11 @@ if (!payerId.equals(s.getKey())) {
     }
 
     public Map<String, Expense> getExpenses() {
-        return expenses;
+        return Map.copyOf(expenses);
     }
 
     public Map<String, Settlement> getSettlements() {
-        return settlements;
+        return Map.copyOf(settlements);
     }
 
     public void checkSettlementValidity(String payerId, String payeeId, BigDecimal amount) {

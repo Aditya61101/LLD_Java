@@ -1,7 +1,5 @@
 package com.lld.Practice.Splitwise.repositories;
 
-import com.lld.Practice.Splitwise.BalanceStatus;
-import com.lld.Practice.Splitwise.Group;
 import com.lld.Practice.Splitwise.User;
 
 import java.util.HashMap;
@@ -11,11 +9,6 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<String, User> users = new HashMap<>();
     // Map for Email-based lookup
     private final Map<String, User> usersByEmail = new HashMap<>();
-    private final GroupRepository groupRepository;
-
-    public InMemoryUserRepository(GroupRepository groupRepository) {
-        this.groupRepository = groupRepository;
-    }
 
     public Map<String, User> getUsers() {
         return users;
@@ -42,19 +35,10 @@ public class InMemoryUserRepository implements UserRepository {
         usersByEmail.put(email, user);
     }
 
-    public BalanceStatus deleteUser(String userId) {
-        if(!this.userExistsById(userId)) {
-            throw new IllegalArgumentException("User not found!");
-        }
-        // if user owes someone or someone owes user, we won't allow user deletion
-        for(Group group: groupRepository.getAllGroups().values()) {
-            BalanceStatus status = group.getBalanceStatus(userId);
-            if(status != BalanceStatus.CLEAR) return status;
-        }
+    public void deleteUser(String userId) {
         String email = users.get(userId).getEmail();
         usersByEmail.remove(email);
         users.remove(userId);
-        return BalanceStatus.CLEAR;
     }
 
     public boolean userExistsByEmail(String email) {
