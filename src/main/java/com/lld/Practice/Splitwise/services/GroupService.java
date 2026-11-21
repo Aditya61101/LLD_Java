@@ -39,6 +39,8 @@ public class GroupService {
     }
 
     public void deleteGroup(String groupId) {
+        Group group = groupRepository.getGroup(groupId);
+        if(!group.isSettled()) throw new IllegalStateException("Group still has some unsettled debts.");
         groupRepository.deleteGroup(groupId);
     }
 

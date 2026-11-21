@@ -91,6 +91,9 @@ public class Group {
         if(!expenses.containsKey(expenseId)) throw new IllegalArgumentException("Expense not found!");
         return expenses.get(expenseId);
     }
+    public boolean isSettled() {
+        return balanceSheet.isSettled();
+    }
     private void validateAmount(BigDecimal amount, int scale) {
         if (amount == null || amount.signum() <= 0) throw new IllegalArgumentException("Invalid amount");
         try {

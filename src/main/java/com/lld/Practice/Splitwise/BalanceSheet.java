@@ -62,4 +62,7 @@ public class BalanceSheet {
         debts.remove(creditorId);
         if (debts.isEmpty()) balance.remove(debtorId);
     }
+    protected boolean isSettled() {
+        return balance.isEmpty();
+    }
 }
