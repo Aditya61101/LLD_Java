@@ -24,8 +24,6 @@ public class SettlementService {
             Group group = groupRepository.getGroup(groupId);
             // 3. checks payer and payee existence
             this.checkParticipantsExistence(Arrays.asList(payerId, payeeId), group);
-            // 4. check whether amount <= actual debt of payee on payer
-            group.checkSettlementValidity(payerId, payeeId, amount);
             // 5. create settlement instance
             Settlement settlement = new Settlement(payerId, payeeId, amount);
             // 7. record settlement

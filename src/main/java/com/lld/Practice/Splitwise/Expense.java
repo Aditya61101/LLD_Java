@@ -1,6 +1,7 @@
 package com.lld.Practice.Splitwise;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,9 +11,10 @@ public class Expense {
     private final BigDecimal amount;
     Map<String, BigDecimal> shares;
     private final SplitType splitType;
+    private final Currency currency;
     private String description;
 
-    public Expense(String payerId, String description, BigDecimal amount, SplitType splitType, Map<String, BigDecimal> shares) {
+    public Expense(String payerId, String description, BigDecimal amount, SplitType splitType, Map<String, BigDecimal> shares, String currency) {
         this.id = "EX-"+ UUID.randomUUID();
         this.payerId = payerId;
         this.splitType = splitType;
@@ -20,6 +22,7 @@ public class Expense {
         this.description = description;
         // Map.copyOf creates an unmodifiable snapshot of the original map
         this.shares = Map.copyOf(shares);
+        this.currency = Currency.getInstance(currency);
     }
 
     public void renameDescription(String newDescription) {
@@ -41,7 +44,10 @@ public class Expense {
     public String getId() {
         return id;
     }
+
     public Map<String, BigDecimal> getShares() {
         return shares;
     }
+
+    public Currency getCurrency() { return currency; }
 }

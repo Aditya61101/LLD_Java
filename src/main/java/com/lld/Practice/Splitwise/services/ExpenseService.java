@@ -20,7 +20,7 @@ public class ExpenseService {
         this.splitStrategyRegistry = splitStrategyRegistry;
     }
 
-    public void createExpense(String groupId, String payerId, SplitType splitType, String description, List<String>participants, Map<String, BigDecimal> allocations, BigDecimal amount) {
+    public String createExpense(String groupId, String payerId, SplitType splitType, String description, List<String>participants, Map<String, BigDecimal> allocations, BigDecimal amount, String currency) {
         // 1. get group or throws exception
         Group group = groupRepository.getGroup(groupId);
         // 2. common validations
@@ -29,9 +29,10 @@ public class ExpenseService {
         SplitStrategy splitStrategy = splitStrategyRegistry.getSplit(splitType);
         Map<String, BigDecimal> shares = splitStrategy.split(amount, participants, allocations);
         // 5. create expense
-        Expense expense = new Expense(payerId, description, amount, splitType, shares);
+        Expense expense = new Expense(payerId, description, amount, splitType, shares, currency);
         // 6. record expense
         group.recordExpense(expense);
+        return expense.getId();
     }
     public void renameDescription(String expenseId, String groupId, String description) {
         Group group = groupRepository.getGroup(groupId);
@@ -49,9 +50,6 @@ public class ExpenseService {
         // checks whether payer exists
         if(!userRepository.userExistsById(payerId)) throw new IllegalArgumentException("Payer doesn't exists");
 
-        // payer should exist in group
-        if(!group.isGroupMember(payerId)) throw new IllegalArgumentException("Payer is not a member of the group");
-
         // at least one participant should be there
         if (participants == null || participants.isEmpty()) throw new IllegalArgumentException("At least one participant is required.");
 
@@ -66,7 +64,6 @@ public class ExpenseService {
         // checks for participants existence
         for(String userId:participants) {
             if(!userRepository.userExistsById(userId)) throw new IllegalArgumentException("Participant doesn't exists");
-            if(!group.isGroupMember(userId)) throw new IllegalArgumentException("Participant not a member of the group");
         }
         // for percentage and exact we need allocations of each participant and it should match participants
         if (splitType != SplitType.EQUAL) {

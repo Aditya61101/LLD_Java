@@ -42,7 +42,7 @@ public class BalanceSheet {
             debts.put(payeeId, remaining);
         }
     }
-    protected void checkSettlementValidity(String payerId, String payeeId, BigDecimal amount) {
+    protected void validateSettlement(String payerId, String payeeId, BigDecimal amount) {
         if(!balance.containsKey(payerId)) throw new IllegalArgumentException("Payer doesn't owe to anyone");
         Map<String, BigDecimal> debts = balance.get(payerId);
         if(!debts.containsKey(payeeId)) throw new IllegalArgumentException("Payer doesn't owe to payee");

@@ -63,8 +63,8 @@ public class SplitWiseSystem {
         groupService.deleteGroup(groupId);
     }
     // Expense CRUD
-    public void createExpense(String groupId, String payerId, SplitType splitType, String description, List<String> participants, Map<String, BigDecimal> allocations, BigDecimal amount) {
-        expenseService.createExpense(groupId, payerId, splitType, description, participants, allocations, amount);
+    public String createExpense(String groupId, String payerId, SplitType splitType, String description, List<String> participants, Map<String, BigDecimal> allocations, BigDecimal amount, String currency) {
+        return expenseService.createExpense(groupId, payerId, splitType, description, participants, allocations, amount, currency);
     }
     public void renameDescription(String expenseId, String groupId, String description) {
         expenseService.renameDescription(expenseId, groupId, description);

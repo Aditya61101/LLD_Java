@@ -11,7 +11,7 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<String, User> usersByEmail = new HashMap<>();
 
     public Map<String, User> getUsers() {
-        return users;
+        return Map.copyOf(users);
     }
 
     public User getUser(String userId) {
