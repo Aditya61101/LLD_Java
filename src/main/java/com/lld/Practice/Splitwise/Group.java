@@ -20,6 +20,7 @@ public class Group {
     }
 
     public void renameGroup(String name) {
+        if(name == null || name.isBlank()) throw new IllegalArgumentException("Empty group name not allowed.");
         this.name = name;
     }
 
@@ -63,11 +64,17 @@ public class Group {
     public void recordSettlement(Settlement settlement) {
         String payerId = settlement.getPayerId();
         String payeeId = settlement.getPayeeId();
+        if(!members.contains(payeeId)) throw new IllegalArgumentException(payeeId+" is not a member of this group");
+        if(!members.contains(payerId)) throw new IllegalArgumentException(payerId+" is not a member of this group");
+
         BigDecimal amount = settlement.getAmount();
+        Currency currency = settlement.getCurrency();
+        int scale = currency.getDefaultFractionDigits();
+        validateAmount(amount, scale);
         // 4. check whether amount <= actual debt of payee on payer
         balanceSheet.validateSettlement(payerId, payeeId, amount);
-        settlements.put(settlement.getId(), settlement);
         balanceSheet.settleDebt(payerId, payeeId, amount);
+        settlements.put(settlement.getId(), settlement);
     }
 
     public boolean isGroupMember(String userId) { return members.contains(userId); }
@@ -84,17 +91,16 @@ public class Group {
         if(!expenses.containsKey(expenseId)) throw new IllegalArgumentException("Expense not found!");
         return expenses.get(expenseId);
     }
-
-    private void validateExpense(BigDecimal amount, String payerId, Map<String, BigDecimal> shares, int scale) {
-        if (amount == null || amount.signum() <= 0) {
-            throw new IllegalArgumentException("Invalid expense amount");
-        }
+    private void validateAmount(BigDecimal amount, int scale) {
+        if (amount == null || amount.signum() <= 0) throw new IllegalArgumentException("Invalid amount");
         try {
             amount.setScale(scale, RoundingMode.UNNECESSARY);
         } catch (ArithmeticException e) {
             throw new IllegalArgumentException("Invalid amount precision");
         }
-
+    }
+    private void validateExpense(BigDecimal amount, String payerId, Map<String, BigDecimal> shares, int scale) {
+        validateAmount(amount, scale);
         if (shares == null || shares.isEmpty()) {
             throw new IllegalArgumentException("Shares cannot be empty");
         }

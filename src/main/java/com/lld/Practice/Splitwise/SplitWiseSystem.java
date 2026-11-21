@@ -70,7 +70,7 @@ public class SplitWiseSystem {
         expenseService.renameDescription(expenseId, groupId, description);
     }
     // Settlement CRUD
-    public void createSettlement(String payerId, String payeeId, BigDecimal amount, String groupId) {
-        settlementService.createSettlement(payerId, payeeId, amount, groupId);
+    public void createSettlement(String payerId, String payeeId, BigDecimal amount, String groupId, String currency) {
+        settlementService.createSettlement(payerId, payeeId, amount, groupId, currency);
     }
 }

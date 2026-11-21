@@ -9,12 +9,12 @@ public class Expense {
     private final String id;
     private final String payerId;
     private final BigDecimal amount;
-    Map<String, BigDecimal> shares;
+    private final Map<String, BigDecimal> shares;
     private final SplitType splitType;
     private final Currency currency;
     private String description;
 
-    public Expense(String payerId, String description, BigDecimal amount, SplitType splitType, Map<String, BigDecimal> shares, String currency) {
+    public Expense(String payerId, String description, BigDecimal amount, SplitType splitType, Map<String, BigDecimal> shares, Currency currency) {
         this.id = "EX-"+ UUID.randomUUID();
         this.payerId = payerId;
         this.splitType = splitType;
@@ -22,10 +22,11 @@ public class Expense {
         this.description = description;
         // Map.copyOf creates an unmodifiable snapshot of the original map
         this.shares = Map.copyOf(shares);
-        this.currency = Currency.getInstance(currency);
+        this.currency = currency;
     }
 
     public void renameDescription(String newDescription) {
+        if(newDescription == null || newDescription.isBlank()) throw new IllegalArgumentException("Empty description not allowed.");
         this.description = newDescription;
     }
 

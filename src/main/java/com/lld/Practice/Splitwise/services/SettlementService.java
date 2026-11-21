@@ -6,8 +6,7 @@ import com.lld.Practice.Splitwise.repositories.GroupRepository;
 import com.lld.Practice.Splitwise.repositories.UserRepository;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Currency;
 
 public class SettlementService {
     private final GroupRepository groupRepository;
@@ -17,22 +16,17 @@ public class SettlementService {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
     }
-    public void createSettlement(String payerId, String payeeId, BigDecimal amount, String groupId) {
-            // 1. amount should be positive
-            if(amount==null || amount.compareTo(BigDecimal.ZERO) <= 0) throw new RuntimeException("Expense amount should be positive");
-            // 2. get group or throws exception
+    public void createSettlement(String payerId, String payeeId, BigDecimal amount, String groupId, String currency) {
+            // get group or throws exception
             Group group = groupRepository.getGroup(groupId);
-            // 3. checks payer and payee existence
-            this.checkParticipantsExistence(Arrays.asList(payerId, payeeId), group);
+            // checks payer and payee existence
+            if(!userRepository.userExistsById(payerId)) throw new IllegalArgumentException("Payer doesn't exists");
+            if(!userRepository.userExistsById(payeeId)) throw new IllegalArgumentException("Payee doesn't exists");
+
             // 5. create settlement instance
-            Settlement settlement = new Settlement(payerId, payeeId, amount);
+            Currency CURRENCY = Currency.getInstance(currency);
+            Settlement settlement = new Settlement(payerId, payeeId, amount, CURRENCY);
             // 7. record settlement
             group.recordSettlement(settlement);
-    }
-    private void checkParticipantsExistence(List<String> participants, Group group) {
-        for(String userId:participants) {
-            if(!userRepository.userExistsById(userId)) throw new IllegalArgumentException("Participant doesn't exists");
-            if(!group.isGroupMember(userId)) throw new IllegalArgumentException("Participant not a member of the group");
-        }
     }
 }

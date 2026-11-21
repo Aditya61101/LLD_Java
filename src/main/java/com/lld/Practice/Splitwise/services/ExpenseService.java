@@ -5,6 +5,8 @@ import com.lld.Practice.Splitwise.repositories.GroupRepository;
 import com.lld.Practice.Splitwise.repositories.UserRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Currency;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +26,14 @@ public class ExpenseService {
         // 1. get group or throws exception
         Group group = groupRepository.getGroup(groupId);
         // 2. common validations
-        this.checkExpenseValidity(amount, description, participants, payerId, group, allocations, splitType);
+        Currency CURRENCY = Currency.getInstance(currency);
+        int scale = CURRENCY.getDefaultFractionDigits();
+        this.checkExpenseValidity(amount, description, participants, payerId, allocations, splitType, scale);
         // 4. get shares based on splitType
         SplitStrategy splitStrategy = splitStrategyRegistry.getSplit(splitType);
-        Map<String, BigDecimal> shares = splitStrategy.split(amount, participants, allocations);
+        Map<String, BigDecimal> shares = splitStrategy.split(amount, participants, allocations, scale);
         // 5. create expense
-        Expense expense = new Expense(payerId, description, amount, splitType, shares, currency);
+        Expense expense = new Expense(payerId, description, amount, splitType, shares, CURRENCY);
         // 6. record expense
         group.recordExpense(expense);
         return expense.getId();
@@ -39,10 +43,16 @@ public class ExpenseService {
         Expense expense = group.getExpense(expenseId);
         expense.renameDescription(description);
     }
-    private void checkExpenseValidity(BigDecimal amount, String description, List<String>participants, String payerId, Group group, Map<String, BigDecimal> allocations, SplitType splitType) {
+    private void checkExpenseValidity(BigDecimal amount, String description, List<String>participants, String payerId, Map<String, BigDecimal> allocations, SplitType splitType, int scale) {
         // amount should be positive
         if(amount == null || amount.signum() <= 0) throw new IllegalArgumentException("Expense amount should be positive");
-
+        try {
+            // setScale(2) means represent the number with two digits after the decimal point.
+            // example 100->100.00, 100.2 -> 100.20, 100.055 -> raises exception
+            amount.setScale(scale, RoundingMode.UNNECESSARY);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("Invalid split");
+        }
         if (description == null || description.isBlank()) throw new IllegalArgumentException("Expense description is required");
 
         if (splitType == null) throw new IllegalArgumentException("Split type is required");
